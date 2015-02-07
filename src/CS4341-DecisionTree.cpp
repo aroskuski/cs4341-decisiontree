@@ -33,11 +33,11 @@ int main(int argc, char** argv) {
 
 	parsefile(infile);
 	int i = 0;
-	for (std::list<GameBoard>::iterator it = trainingList.begin(); it !=trainingList.end(); it++){
-		it->printboard();
-		i++;
-		cout << i << " boards printed\n";
-	}
+	//for (std::list<GameBoard>::iterator it = trainingList.begin(); it !=trainingList.end(); it++){
+	//	it->printboard();
+	//	i++;
+	//	cout << i << " boards printed\n";
+	//}
 
 	return 0;
 }
