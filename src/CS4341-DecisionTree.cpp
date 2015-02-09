@@ -20,8 +20,8 @@ void parsefile(ifstream &in);
 int main(int argc, char** argv) {
 	//cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 
-	if(argc != 2){
-		cout << "1 argument expected\n";
+	if(argc != 3){
+		cout << "2 arguments expected\n";
 		return 1;
 	}
 	ifstream infile(argv[1]);
@@ -32,12 +32,18 @@ int main(int argc, char** argv) {
 	}
 
 	parsefile(infile);
-	int i = 0;
-	//for (std::list<GameBoard>::iterator it = trainingList.begin(); it !=trainingList.end(); it++){
-	//	it->printboard();
-	//	i++;
-	//	cout << i << " boards printed\n";
-	//}
+	//int i = 0;
+
+	ofstream outfile(argv[2]);
+
+	if(!outfile.is_open()){
+		return 1;
+	}
+
+	outfile << "imminentwin,imminentlosses,p1open,winlose\n";
+	for (std::list<GameBoard>::iterator it = trainingList.begin(); it !=trainingList.end(); it++){
+		outfile << it->printFeatures();
+	}
 
 	return 0;
 }

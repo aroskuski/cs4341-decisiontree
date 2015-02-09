@@ -17,11 +17,14 @@ public:
 	virtual ~GameBoard();
 	void printboard();
 	string tostring();
+	string printFeatures();
 private:
 	int board[6][7];
 	int winner;
 	int p1open;
-	int p2open;
+	//int p2open;
+	int imminentwins;
+	int imminentlosses;
 	void computefeatures();
 	void analyzeOpen();
 	bool contains(list<Coords> visited, Coords c);
