@@ -10,8 +10,9 @@ using namespace std;
 #include "GameBoard.h"
 #include "Coords.h"
 
+//initializes all the values
 GameBoard::GameBoard(int board[], int winner) {
-	// TODO Auto-generated constructor stub
+
 
 	int i, j;
 
@@ -40,9 +41,10 @@ GameBoard::GameBoard(int board[], int winner) {
 }
 
 GameBoard::~GameBoard() {
-	// TODO Auto-generated destructor stub
+
 }
 
+//prints this object on the stdout
 void GameBoard::printboard(){
 	int i, j;
 	for(i = 0; i < 6; i++){
@@ -60,6 +62,7 @@ void GameBoard::printboard(){
 	cout << "Winner: " << winner << "\n";
 }
 
+//computes the features on this object
 void GameBoard::computefeatures(){
 
 	analyzeOpen();
@@ -75,9 +78,9 @@ void GameBoard::computefeatures(){
 	leftcontrol();
 	rightcontrol();
 	side = left + right;
-	if (side > 1){
+	if (side > 2){
 		side = 1;
-	} else if (side < -1){
+	} else if (side < -2){
 		side = -1;
 	} else {
 		side = 0;
@@ -86,6 +89,8 @@ void GameBoard::computefeatures(){
 	columncontrol();
 }
 
+
+//determines which player controls more columns
 void GameBoard::columncontrol(){
 	for (int i = 0; i < 7; i++){
 		bool p1 = false;
@@ -110,6 +115,9 @@ void GameBoard::columncontrol(){
 
 }
 
+
+//NOT USED
+// computes which player controls more of the top
 void GameBoard::topcontrol(){
 	for(int i = 0; i < 7; i++){
 		int next = nextOpenRow(i);
@@ -130,6 +138,8 @@ void GameBoard::topcontrol(){
 		}
 }
 
+
+// Computes which player controls more of the center 5 columns of the board
 void GameBoard::centercontrol(){
 	for (int j = 1; j <= 5; j++){
 		for (int i = 0; i < 6; i++){
@@ -149,6 +159,7 @@ void GameBoard::centercontrol(){
 	}
 }
 
+//computes which player controls more of the left 2 columns of the board
 void GameBoard::leftcontrol(){
 	for (int j = 0; j <= 1; j++){
 		for (int i = 0; i < 6; i++){
@@ -161,8 +172,9 @@ void GameBoard::leftcontrol(){
 	}
 }
 
+//computes which player controls more of the right 2 columns of the board
 void GameBoard::rightcontrol(){
-	for (int j = 4; j <= 7; j++){
+	for (int j = 5; j < 7; j++){
 		for (int i = 0; i < 6; i++){
 			if(board[i][j] == 1){
 				right++;
@@ -173,6 +185,7 @@ void GameBoard::rightcontrol(){
 	}
 }
 
+//Analyzes how many open moves each player has
 void GameBoard::analyzeOpen(){
 	list<Coords> visitedVertical;
 	list<Coords> visitedHorizontal;
@@ -456,6 +469,7 @@ int GameBoard::analyzeDownDiag(int row, int col, list<Coords> visited){
 	}
 }
 
+//returns true if the list contains an equal Coords object
 bool GameBoard::contains(list<Coords> visited, Coords c){
 	for(std::list<Coords>::iterator it = visited.begin(); it != visited.end(); it++){
 		if (*it == c){
@@ -465,6 +479,7 @@ bool GameBoard::contains(list<Coords> visited, Coords c){
 	return false;
 }
 
+//Returns the next open row for a column
 int GameBoard::nextOpenRow(int col){
 	for (int i = 0; i < 6; i++){
 		if(board[i][col] != 0){
@@ -474,6 +489,7 @@ int GameBoard::nextOpenRow(int col){
 	return 5;
 }
 
+//Returns a string containing the board state and it's generated features
 string GameBoard::printFeatures(){
 	stringstream ss;
 	int i,j;
