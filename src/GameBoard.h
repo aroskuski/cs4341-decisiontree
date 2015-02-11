@@ -31,6 +31,7 @@ private:
 	int right;
 	int side;
 	int top;
+	int columns;
 	void computefeatures();
 	void analyzeOpen();
 	bool contains(list<Coords> visited, Coords c);
@@ -43,6 +44,7 @@ private:
 	void leftcontrol();
 	void rightcontrol();
 	void topcontrol();
+	void columncontrol();
 };
 
 #endif /* GAMEBOARD_H_ */

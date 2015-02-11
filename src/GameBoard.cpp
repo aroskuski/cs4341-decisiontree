@@ -33,6 +33,7 @@ GameBoard::GameBoard(int board[], int winner) {
 	this->right = 0;
 	this->side = 0;
 	this->top = 0;
+	this->columns = 0;
 
 	this->computefeatures();
 
@@ -62,10 +63,12 @@ void GameBoard::printboard(){
 void GameBoard::computefeatures(){
 
 	analyzeOpen();
-	if (opencomb >= 0){
+	if (opencomb > 4){
 		opencomb = 1;
-	} else {
+	} else if (opencomb < -4){
 		opencomb = -1;
+	} else {
+		opencomb = 0;
 	}
 
 	centercontrol();
@@ -79,6 +82,32 @@ void GameBoard::computefeatures(){
 	} else {
 		side = 0;
 	}
+
+	columncontrol();
+}
+
+void GameBoard::columncontrol(){
+	for (int i = 0; i < 7; i++){
+		bool p1 = false;
+		bool p2 = false;
+		for(int j = 0; j < 6; j++){
+			if(board[j][i] == 1 && !p1){
+				columns++;
+				p1 = true;
+			} else if (board[j][i] == 2 && !p2){
+				columns--;
+				p2 = true;
+			}
+		}
+	}
+	if (columns > 1){
+		columns = 1;
+	} else if(columns < -1){
+		columns = -1;
+	} else {
+		columns = 0;
+	}
+
 }
 
 void GameBoard::topcontrol(){
@@ -102,7 +131,7 @@ void GameBoard::topcontrol(){
 }
 
 void GameBoard::centercontrol(){
-	for (int j = 2; j <= 4; j++){
+	for (int j = 1; j <= 5; j++){
 		for (int i = 0; i < 6; i++){
 			if(board[i][j] == 1){
 				center++;
@@ -113,7 +142,7 @@ void GameBoard::centercontrol(){
 	}
 	if(center > 1){
 		center = 1;
-	} else if (center < -1){
+	} else if (center < 1){
 		center = -1;
 	} else {
 		center = 0;
@@ -133,7 +162,7 @@ void GameBoard::leftcontrol(){
 }
 
 void GameBoard::rightcontrol(){
-	for (int j = 2; j <= 4; j++){
+	for (int j = 4; j <= 7; j++){
 		for (int i = 0; i < 6; i++){
 			if(board[i][j] == 1){
 				right++;
@@ -280,7 +309,7 @@ int GameBoard::analyzeHorizontal(int row, int col, list<Coords> visited){
 			}
 		}
 		if (openleft && openright){
-			return connected;
+			return connected*2;
 		} else {
 			return connected;
 		}
@@ -349,7 +378,7 @@ int GameBoard::analyzeUpDiag(int row, int col, list<Coords> visited){
 			}
 		}
 		if (openleft && openright){
-			return connected;
+			return connected*2;
 		} else {
 			return connected;
 		}
@@ -418,7 +447,7 @@ int GameBoard::analyzeDownDiag(int row, int col, list<Coords> visited){
 			}
 		}
 		if (openleft && openright){
-			return connected;
+			return connected*2;
 		} else {
 			return connected;
 		}
@@ -447,7 +476,13 @@ int GameBoard::nextOpenRow(int col){
 
 string GameBoard::printFeatures(){
 	stringstream ss;
-	ss << imminentwin << "," << center << "," << side << "," << top << "," << opencomb << "," << winner << "\n";
+	int i,j;
+	for(i = 0; i < 6; i++){
+		for(j = 0; j < 7; j++){
+			ss << board[i][j] << ",";
+		}
+	}
+	ss << imminentwin << "," << center << "," << side << "," << columns << "," << opencomb << "," << winner << "\n";
 	return ss.str();
 
 }
