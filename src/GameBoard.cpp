@@ -23,9 +23,16 @@ GameBoard::GameBoard(int board[], int winner) {
 
 	this->winner = winner;
 
-	this->imminentwins = 0;
+	this->imminentwin = 0;
 	this->imminentlosses = 0;
 	this->p1open = 0;
+	this->p2open = 0;
+	this->opencomb = 0;
+	this->center = 0;
+	this->left = 0;
+	this->right = 0;
+	this->side = 0;
+	this->top = 0;
 
 	this->computefeatures();
 
@@ -55,7 +62,86 @@ void GameBoard::printboard(){
 void GameBoard::computefeatures(){
 
 	analyzeOpen();
+	if (opencomb >= 0){
+		opencomb = 1;
+	} else {
+		opencomb = -1;
+	}
 
+	centercontrol();
+	leftcontrol();
+	rightcontrol();
+	side = left + right;
+	if (side > 1){
+		side = 1;
+	} else if (side < -1){
+		side = -1;
+	} else {
+		side = 0;
+	}
+}
+
+void GameBoard::topcontrol(){
+	for(int i = 0; i < 7; i++){
+		int next = nextOpenRow(i);
+		if (next < 5){
+			if(board[next][i] == 1){
+				top++;
+			} else if(board[next][i] == 2){
+				top--;
+			}
+		}
+	}
+	if (top > 0){
+			top = 1;
+		} else if (top < 0){
+			top = -1;
+		} else {
+			top = 0;
+		}
+}
+
+void GameBoard::centercontrol(){
+	for (int j = 2; j <= 4; j++){
+		for (int i = 0; i < 6; i++){
+			if(board[i][j] == 1){
+				center++;
+			} else if(board[i][j] == 2) {
+				center--;
+			}
+		}
+	}
+	if(center > 1){
+		center = 1;
+	} else if (center < -1){
+		center = -1;
+	} else {
+		center = 0;
+	}
+}
+
+void GameBoard::leftcontrol(){
+	for (int j = 0; j <= 1; j++){
+		for (int i = 0; i < 6; i++){
+			if(board[i][j] == 1){
+				left++;
+			} else if(board[i][j] == 2) {
+				left--;
+			}
+		}
+	}
+}
+
+void GameBoard::rightcontrol(){
+	for (int j = 2; j <= 4; j++){
+		for (int i = 0; i < 6; i++){
+			if(board[i][j] == 1){
+				right++;
+			} else if(board[i][j] == 2) {
+				right--;
+			}
+		}
+	}
 }
 
 void GameBoard::analyzeOpen(){
@@ -73,13 +159,15 @@ void GameBoard::analyzeOpen(){
 				p1open += analyzeDownDiag(i,j, visitedDownDiag);
 				p1open += analyzeUpDiag(i,j, visitedUpDiag);
 			} else if (board[i][j] == 2){
-				p1open -= analyzeVertical(i, j, visitedVertical);
-				p1open -= analyzeHorizontal(i, j, visitedHorizontal);
-				p1open -= analyzeDownDiag(i,j, visitedDownDiag);
-				p1open -= analyzeUpDiag(i,j, visitedUpDiag);
+				p2open += analyzeVertical(i, j, visitedVertical);
+				p2open += analyzeHorizontal(i, j, visitedHorizontal);
+				p2open += analyzeDownDiag(i,j, visitedDownDiag);
+				p2open += analyzeUpDiag(i,j, visitedUpDiag);
 			}
 		}
 	}
+
+	opencomb = p1open - p2open;
 	//cout << "p1open: " << p1open << "\n";
 	//cout << "p2open: " << p2open << "\n";
 }
@@ -120,7 +208,7 @@ int GameBoard::analyzeVertical(int row, int col, list<Coords> visited){
 	if(nextOpenRow(col) == row - 1){
 		if (connected == 3){
 			if (board[row][col] == 1){
-				imminentwins++;
+				imminentwin++;
 			} else {
 				imminentlosses++;
 			}
@@ -175,9 +263,20 @@ int GameBoard::analyzeHorizontal(int row, int col, list<Coords> visited){
 	if(openleft || openright){
 		if (connected == 3){
 			if (board[row][col] == 1){
-				imminentwins++;
-			} else {
-				imminentlosses++;
+				bool usable = false;
+				if(openleft){
+					if(nextOpenRow(col - 1) == row){
+						usable = true;
+					}
+				}
+				if(openright){
+					if(nextOpenRow(col + 1) == row){
+						usable = true;
+					}
+				}
+				if (usable){
+					imminentwin = 1;
+				}
 			}
 		}
 		if (openleft && openright){
@@ -233,9 +332,20 @@ int GameBoard::analyzeUpDiag(int row, int col, list<Coords> visited){
 	if(openleft || openright){
 		if (connected == 3){
 			if (board[row][col] == 1){
-				imminentwins++;
-			} else {
-				imminentlosses++;
+				bool usable = false;
+				if(openleft){
+					if(nextOpenRow(col - 1) == row - 1){
+						usable = true;
+					}
+				}
+				if(openright){
+					if(nextOpenRow(col + 1) == row + 1){
+						usable = true;
+					}
+				}
+				if (usable){
+					imminentwin = 1;
+				}
 			}
 		}
 		if (openleft && openright){
@@ -291,9 +401,20 @@ int GameBoard::analyzeDownDiag(int row, int col, list<Coords> visited){
 	if(openleft || openright){
 		if (connected == 3){
 			if (board[row][col] == 1){
-				imminentwins++;
-			} else {
-				imminentlosses++;
+				bool usable = false;
+				if(openleft){
+					if(nextOpenRow(col - 1) == row + 1){
+						usable = true;
+					}
+				}
+				if(openright){
+					if(nextOpenRow(col + 1) == row - 1){
+						usable = true;
+					}
+				}
+				if (usable){
+					imminentwin = 1;
+				}
 			}
 		}
 		if (openleft && openright){
@@ -326,7 +447,7 @@ int GameBoard::nextOpenRow(int col){
 
 string GameBoard::printFeatures(){
 	stringstream ss;
-	ss << imminentwins << "," << imminentlosses << "," << p1open << "," << winner << "\n";
+	ss << imminentwin << "," << center << "," << side << "," << top << "," << opencomb << "," << winner << "\n";
 	return ss.str();
 
 }

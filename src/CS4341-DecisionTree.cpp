@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
 	//cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 
 	if(argc != 3){
-		cout << "2 arguments expected\n";
+		cout << "expected arguments: <infile> <outfile>\n";
 		return 1;
 	}
 	ifstream infile(argv[1]);
@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	outfile << "imminentwin,imminentlosses,p1open,winlose\n";
+	outfile << "imminentwin,center,side,top,opencomb,winlose\n";
 	for (std::list<GameBoard>::iterator it = trainingList.begin(); it !=trainingList.end(); it++){
 		outfile << it->printFeatures();
 	}

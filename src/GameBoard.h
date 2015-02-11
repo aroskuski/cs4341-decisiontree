@@ -22,9 +22,15 @@ private:
 	int board[6][7];
 	int winner;
 	int p1open;
-	//int p2open;
-	int imminentwins;
+	int p2open;
+	int opencomb;
+	int imminentwin;
 	int imminentlosses;
+	int center;
+	int left;
+	int right;
+	int side;
+	int top;
 	void computefeatures();
 	void analyzeOpen();
 	bool contains(list<Coords> visited, Coords c);
@@ -33,6 +39,10 @@ private:
 	int analyzeUpDiag(int row, int col, list<Coords> visited);
 	int analyzeDownDiag(int row, int col, list<Coords> visited);
 	int nextOpenRow(int col);
+	void centercontrol();
+	void leftcontrol();
+	void rightcontrol();
+	void topcontrol();
 };
 
 #endif /* GAMEBOARD_H_ */
